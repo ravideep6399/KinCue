@@ -54,8 +54,9 @@ test("ships a Firebase auth boundary and family-scoped security rules", async ()
   assert.doesNotMatch(environment, /NEXT_PUBLIC_FIREBASE_PRIVATE_KEY/);
   assert.match(packageJson, /"firebase"/);
   assert.match(packageJson, /"firebase-admin"/);
-  assert.match(packageJson, /"dev": "next dev"/);
-  assert.doesNotMatch(packageJson, /vinext|drizzle/i);
+  assert.match(packageJson, /"dev": "vinext dev"/);
+  assert.match(packageJson, /"build": "vinext build"/);
+  assert.doesNotMatch(packageJson, /drizzle/i);
   await assert.rejects(access(new URL("../app/chatgpt-auth.ts", root)));
   await assert.rejects(access(new URL("../drizzle.config.ts", root)));
 });
