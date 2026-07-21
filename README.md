@@ -142,5 +142,4 @@ deployed role rules and authenticated API workflows, and removes its test data.
 The complete manual test and account-setup sequence is in
 [`docs/TESTING.md`](docs/TESTING.md).
 Use [`docs/FINAL_CHECKLIST.md`](docs/FINAL_CHECKLIST.md) for the final release
-gate and [`docs/VIDEO_AND_SUBMISSION.md`](docs/VIDEO_AND_SUBMISSION.md) when the
-deployed build is ready to record.
+gate.
