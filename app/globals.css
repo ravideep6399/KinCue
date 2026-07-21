@@ -374,7 +374,14 @@ button:focus-visible, textarea:focus-visible, input:focus-visible {
 .unresolved-list { padding: 14px 18px; border-top: 1px solid var(--line); }
 .unresolved-list > strong { font-size: 12px; }
 .unresolved-list p { margin: 8px 0 0; color: var(--danger); font-size: 12px; display: flex; align-items: flex-start; gap: 6px; }
-.confirm-row { padding: 16px; justify-content: flex-end; }
+.handover-review-footer { padding: 18px; border-top: 1px solid var(--line); background: #fbfcfa; display: grid; gap: 16px; }
+.review-confirmation { padding: 12px 14px; border: 1px solid #e8c7c3; border-radius: 6px; background: var(--danger-soft); }
+.review-confirmation-title { color: var(--danger); display: flex; align-items: center; gap: 8px; }
+.review-confirmation-title svg { flex: 0 0 auto; }
+.review-confirmation-title strong { font-size: 13px; }
+.review-confirmation ul { margin: 8px 0 0; padding-left: 25px; color: #653d39; }
+.review-confirmation li { padding-left: 2px; font-size: 13px; line-height: 1.5; }
+.confirm-row { padding: 0; justify-content: flex-end; }
 .standalone-error { margin: 14px 0 0; padding: 11px 13px; border: 1px solid #e8c7c3; background: var(--danger-soft); color: var(--danger); font-size: 13px; }
 .handover-history { margin-top: 20px; }
 .history-empty { min-height: 110px; display: flex; align-items: center; justify-content: center; gap: 9px; color: var(--muted); }
@@ -529,5 +536,7 @@ button:focus-visible, textarea:focus-visible, input:focus-visible {
   .playbook-list li { padding: 14px; gap: 10px; }
   .playbook-copy > div:first-child { display: block; }
   .playbook-copy .category-label { display: block; margin-bottom: 3px; }
+  .handover-review-footer { padding: 14px; }
+  .confirm-row .primary-button { width: 100%; }
   .activity-dialog-body { padding: 16px; }
 }

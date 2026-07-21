@@ -144,10 +144,15 @@ export function HandoverWorkspace({ notify }: { notify: (message: string) => voi
                   {item.warnings.map((warning) => <div className="warning-line" key={warning}><CircleAlert size={14} />{warning}</div>)}
                 </div>
               ))}
-              {extraction.unresolvedQuestions.length > 0 && (
-                <div className="unresolved-list"><strong>Needs confirmation</strong>{extraction.unresolvedQuestions.map((question) => <p key={question}><CircleAlert size={14} />{question}</p>)}</div>
-              )}
-              <div className="confirm-row"><button className="primary-button" disabled={saving} onClick={() => void confirmHandover()} type="button"><Save size={17} />{saving ? "Saving..." : "Confirm and save"}</button></div>
+              <div className="handover-review-footer">
+                {extraction.unresolvedQuestions.length > 0 && (
+                  <div className="review-confirmation">
+                    <div className="review-confirmation-title"><CircleAlert size={17} /><strong>Needs confirmation</strong></div>
+                    <ul>{extraction.unresolvedQuestions.map((question) => <li key={question}>{question}</li>)}</ul>
+                  </div>
+                )}
+                <div className="confirm-row"><button className="primary-button" disabled={saving} onClick={() => void confirmHandover()} type="button"><Save size={17} />{saving ? "Saving..." : "Confirm and save"}</button></div>
+              </div>
             </div>
           )}
         </div>
