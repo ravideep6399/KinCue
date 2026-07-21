@@ -1,5 +1,6 @@
 import vinext from "vinext";
 import { defineConfig } from "vite";
+import { resolve } from "node:path";
 import { sites } from "./build/sites-vite-plugin";
 
 const localBindingConfig = {
@@ -17,6 +18,15 @@ export default defineConfig(async () => {
   return {
     define: {
       __dirname: JSON.stringify("/"),
+    },
+    resolve: {
+      alias: {
+        "firebase-admin/app": resolve("node_modules/firebase-admin/lib/app/index.js"),
+        "firebase-admin/auth": resolve("node_modules/firebase-admin/lib/auth/index.js"),
+        "firebase-admin/firestore": resolve(
+          "node_modules/firebase-admin/lib/firestore/index.js",
+        ),
+      },
     },
     plugins: [
       vinext(),
