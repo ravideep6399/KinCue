@@ -15,6 +15,9 @@ export default defineConfig(async () => {
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
   return {
+    define: {
+      __dirname: JSON.stringify("/"),
+    },
     plugins: [
       vinext(),
       sites(),
