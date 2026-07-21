@@ -3,81 +3,28 @@ import { zodTextFormat } from "openai/helpers/zod";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { handoverExtractionSchema } from "../../../../src/ai/schemas";
+import { extractHandoverLocally } from "../../../../src/ai/local-extraction";
 import { runtimeSkills } from "../../../../src/ai/skill-loader";
 
 const requestSchema = z.object({
+  familySpaceId: z.string().trim().min(1).max(128),
   transcript: z.string().trim().min(12).max(8000),
 });
 
-function localExtraction(transcript: string) {
-  const timeMatch = transcript.match(
-    /\b(?:at\s+)?(\d{1,2}(?::\d{2})?\s*(?:a\.?m\.?|p\.?m\.?))\b/i,
-  );
-  const sentences = transcript
-    .split(/(?<=[.!?])\s+/)
-    .map((sentence) => sentence.trim())
-    .filter(Boolean);
-
-  const items = sentences
-    .filter((sentence) =>
-      /medicine|medication|appointment|call|drawer|bag|box|meal|dinner|breakfast|task/i.test(
-        sentence,
-      ),
-    )
-    .slice(0, 5)
-    .map((sentence) => {
-      const isMedication = /medicine|medication|tablet|dose/i.test(sentence);
-      const isAppointment = /appointment|clinic|doctor/i.test(sentence);
-      const isLocation = /drawer|bag|box|cabinet|shelf|kept|inside/i.test(
-        sentence,
-      );
-      const type = isMedication
-        ? "medication_instruction"
-        : isAppointment
-          ? "appointment"
-          : isLocation
-            ? "item_location"
-            : "task";
-
-      return {
-        type,
-        title: isMedication
-          ? "Medication instruction"
-          : isAppointment
-            ? "Appointment update"
-            : isLocation
-              ? "Item location"
-              : "Follow-up task",
-        person: /grandma|grandmother/i.test(sentence) ? "Grandma" : null,
-        scheduledTime: timeMatch?.[1] ?? null,
-        condition: /after dinner/i.test(sentence) ? "After dinner" : null,
-        location: isLocation ? sentence : null,
-        assignee: null,
-        sourceExcerpt: sentence,
-        confidence:
-          isMedication && !/\b\w+\s+\d+\s*mg\b/i.test(sentence)
-            ? "medium"
-            : "high",
-        requiresConfirmation: true,
-        warnings:
-          isMedication && !/\b\w+\s+\d+\s*mg\b/i.test(sentence)
-            ? ["Medicine name or strength was not clearly stated."]
-            : [],
-      } as const;
-    });
-
-  return handoverExtractionSchema.parse({
-    summary:
-      "A family handover containing schedule, care, and location updates is ready for review.",
-    items,
-    unresolvedQuestions:
-      items.length === 0
-        ? ["No actionable family updates were identified. Add more detail and try again."]
-        : [],
-  });
-}
-
 export async function POST(request: Request) {
+  const { authenticateFirebaseRequest, FirebaseRequestError, getFirebaseAdmin } = await import(
+    "../../../../src/firebase/admin"
+  );
+  let identity;
+  try {
+    identity = await authenticateFirebaseRequest(request);
+  } catch (error) {
+    if (error instanceof FirebaseRequestError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    throw error;
+  }
+
   const parsed = requestSchema.safeParse(await request.json());
 
   if (!parsed.success) {
@@ -87,10 +34,20 @@ export async function POST(request: Request) {
     );
   }
 
+  const membership = await getFirebaseAdmin().db
+    .doc(`familySpaces/${parsed.data.familySpaceId}/members/${identity.uid}`)
+    .get();
+  if (!membership.exists || membership.data()?.role === "viewer") {
+    return NextResponse.json(
+      { error: "Contributor access to this Family Space is required." },
+      { status: 403 },
+    );
+  }
+
   if (!process.env.OPENAI_API_KEY) {
     return NextResponse.json({
-      extraction: localExtraction(parsed.data.transcript),
-      mode: "local-demo",
+      extraction: extractHandoverLocally(parsed.data.transcript),
+      mode: "local-rules",
     });
   }
 
@@ -123,9 +80,10 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Handover extraction failed", error);
-    return NextResponse.json(
-      { error: "KinCue could not structure this handover. Please try again." },
-      { status: 502 },
-    );
+    return NextResponse.json({
+      extraction: extractHandoverLocally(parsed.data.transcript),
+      mode: "local-fallback",
+      warning: "OpenAI was unavailable, so KinCue used local extraction.",
+    });
   }
 }
