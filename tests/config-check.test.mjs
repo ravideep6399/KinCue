@@ -23,6 +23,7 @@ test("validates complete zero-spend configuration without printing secrets", () 
       SUPABASE_SECRET_KEY: secret,
       SUPABASE_STORAGE_BUCKET: "kincue-vault",
       OPENAI_API_KEY: "",
+      GEMINI_API_KEY: "",
     },
   });
 

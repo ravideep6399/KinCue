@@ -160,11 +160,14 @@ export type HandoverRecord = {
   summary: string;
   items: HandoverExtraction["items"];
   unresolvedQuestions: string[];
+  provider?: HandoverProvider;
   createdByUserId: string;
   createdByDisplayName: string;
   createdAt: unknown;
   updatedAt: unknown;
 };
+
+export type HandoverProvider = "openai" | "gemini" | "local-rules" | "local-fallback";
 
 export type VaultDocumentCategory = "care" | "identity" | "household" | "insurance" | "other";
 

@@ -215,7 +215,11 @@ try {
     headers: { "content-type": "application/json" },
   });
   assert(handoverResponse.status === 200, `Handover extraction returned ${handoverResponse.status}.`);
-  assert((await handoverResponse.json()).mode === "local-rules", "Handover did not use zero-spend local mode.");
+  const handoverResult = await handoverResponse.json();
+  assert(
+    ["openai", "gemini", "local-rules", "local-fallback"].includes(handoverResult.mode),
+    `Handover returned an unknown provider mode: ${handoverResult.mode}.`,
+  );
   const deniedHandover = await api(viewer, "/api/handovers/extract", {
     method: "POST",
     body: JSON.stringify({ familySpaceId: spaceId, transcript: "This viewer request must be denied by the API." }),
@@ -244,7 +248,7 @@ try {
   console.log("- viewer write denial and cross-family isolation");
   console.log("- server-only cue and device-token collections");
   console.log("- care-recipient-specific backup assignment and cue generation");
-  console.log("- zero-spend handover extraction and role enforcement");
+  console.log(`- ${handoverResult.mode} handover extraction and role enforcement`);
   console.log("- private Vault upload, signed read, role denial, and deletion");
 } catch (error) {
   console.error(error instanceof Error ? `KinCue live integration check failed: ${error.message}` : "KinCue live integration check failed.");

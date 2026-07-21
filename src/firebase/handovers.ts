@@ -12,13 +12,14 @@ import {
 } from "firebase/firestore";
 import type { HandoverExtraction } from "../ai/schemas";
 import { getFirebaseClient } from "./client";
-import type { HandoverRecord } from "./models";
+import type { HandoverProvider, HandoverRecord } from "./models";
 
 export async function saveHandover(
   familySpaceId: string,
   identity: { uid: string; displayName: string },
   transcript: string,
   extraction: HandoverExtraction,
+  provider: HandoverProvider,
 ) {
   const { db } = getFirebaseClient();
   const handoverRef = doc(collection(db, "familySpaces", familySpaceId, "handovers"));
@@ -28,6 +29,7 @@ export async function saveHandover(
     summary: extraction.summary,
     items: extraction.items,
     unresolvedQuestions: extraction.unresolvedQuestions,
+    provider,
     createdByUserId: identity.uid,
     createdByDisplayName: identity.displayName,
     createdAt: serverTimestamp(),

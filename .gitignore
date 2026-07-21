@@ -44,3 +44,4 @@ next-env.d.ts
 /.npm-cache/
 /.dev-server.*.log
 /.submission/
+*.tsbuildinfo

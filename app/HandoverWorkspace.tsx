@@ -4,7 +4,7 @@ import { ChevronDown, CircleAlert, MessageSquareText, Mic, Save, Sparkles } from
 import { useEffect, useRef, useState } from "react";
 import type { HandoverExtraction } from "../src/ai/schemas";
 import { saveHandover, subscribeToHandovers } from "../src/firebase/handovers";
-import type { HandoverRecord } from "../src/firebase/models";
+import type { HandoverProvider, HandoverRecord } from "../src/firebase/models";
 import { useKinCueAuth } from "./FirebaseAuth";
 import { useFamilySpace } from "./FamilySpace";
 import { recordActivity } from "../src/firebase/activity";
@@ -14,7 +14,7 @@ export function HandoverWorkspace({ notify }: { notify: (message: string) => voi
   const { activeSpace } = useFamilySpace();
   const [transcript, setTranscript] = useState("");
   const [extraction, setExtraction] = useState<HandoverExtraction | null>(null);
-  const [extractionMode, setExtractionMode] = useState<"local-rules" | "local-fallback" | "openai" | null>(null);
+  const [extractionMode, setExtractionMode] = useState<HandoverProvider | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [recording, setRecording] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
@@ -46,11 +46,7 @@ export function HandoverWorkspace({ notify }: { notify: (message: string) => voi
       const body = await response.json();
       if (!response.ok) throw new Error(body.error);
       setExtraction(body.extraction);
-      setExtractionMode(
-        body.mode === "local-rules" || body.mode === "local-fallback"
-          ? body.mode
-          : "openai",
-      );
+      setExtractionMode(normalizeProvider(body.mode));
       if (body.warning) notify(body.warning);
       notify("The handover is ready for review.");
     } catch (extractionError) {
@@ -65,7 +61,13 @@ export function HandoverWorkspace({ notify }: { notify: (message: string) => voi
     setSaving(true);
     setError(null);
     try {
-      await saveHandover(activeSpace.familySpaceId, identity, transcript, extraction);
+      await saveHandover(
+        activeSpace.familySpaceId,
+        identity,
+        transcript,
+        extraction,
+        extractionMode ?? "local-rules",
+      );
       void recordActivity(activeSpace.familySpaceId, identity, "handover_saved", "Saved a reviewed caregiver handover");
       setTranscript("");
       setExtraction(null);
@@ -128,7 +130,7 @@ export function HandoverWorkspace({ notify }: { notify: (message: string) => voi
           </div>
         </div>
         <div className="panel">
-          <div className="panel-header"><h3>Proposed briefing</h3><span>{extraction ? `${extraction.items.length} items | ${extractionMode === "openai" ? "OpenAI" : extractionMode === "local-fallback" ? "Local fallback" : "Local"}` : "Waiting"}</span></div>
+          <div className="panel-header"><h3>Proposed briefing</h3><span>{extraction ? `${extraction.items.length} items | ${providerLabel(extractionMode)}` : "Waiting"}</span></div>
           {!extraction ? (
             <div className="product-empty"><Sparkles size={28} /><h3>Nothing to review</h3><p>Structured proposals will appear after a handover is submitted.</p></div>
           ) : (
@@ -160,7 +162,7 @@ export function HandoverWorkspace({ notify }: { notify: (message: string) => voi
             <li key={handover.id}>
               <details className="saved-handover">
                 <summary>
-                  <span><strong>{handover.summary}</strong><small>{handover.createdByDisplayName} | {formatDate(handover.createdAt)}</small></span>
+                  <span><strong>{handover.summary}</strong><small>{handover.createdByDisplayName} | {formatDate(handover.createdAt)}{handover.provider ? ` | ${providerLabel(handover.provider)}` : ""}</small></span>
                   <ChevronDown aria-hidden="true" size={18} />
                 </summary>
                 <div className="saved-handover-body">
@@ -202,4 +204,17 @@ type SpeechRecognitionLike = {
 function formatDate(value: unknown) {
   const date = value && typeof value === "object" && "toDate" in value && typeof value.toDate === "function" ? value.toDate() as Date : new Date(String(value));
   return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(date) : "Saving...";
+}
+
+function normalizeProvider(value: unknown): HandoverProvider {
+  return value === "openai" || value === "gemini" || value === "local-fallback"
+    ? value
+    : "local-rules";
+}
+
+function providerLabel(provider: HandoverProvider | null) {
+  if (provider === "openai") return "OpenAI";
+  if (provider === "gemini") return "Gemini";
+  if (provider === "local-fallback") return "Local fallback";
+  return "Local";
 }

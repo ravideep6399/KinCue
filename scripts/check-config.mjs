@@ -71,7 +71,13 @@ if (problems.length > 0) {
   console.log("KinCue configuration is ready.");
   console.log(`- Firebase web and Admin: configured (${publicProjectId})`);
   console.log(`- Supabase private Vault: configured (${bucket})`);
-  console.log(`- Handover extraction: ${value("OPENAI_API_KEY") ? "OpenAI enabled" : "local zero-spend mode"}`);
+  const aiProviders = [
+    value("OPENAI_API_KEY") ? "OpenAI" : null,
+    value("GEMINI_API_KEY") ? "Gemini" : null,
+  ].filter(Boolean);
+  console.log(
+    `- Handover extraction: ${aiProviders.length ? `${aiProviders.join(" + ")} enabled` : "local zero-spend mode"}`,
+  );
 }
 
 async function readEnvironmentFile(path) {

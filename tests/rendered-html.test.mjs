@@ -172,6 +172,8 @@ test("saves reviewed AI handovers as family history", async () => {
   assert.match(view, /Confirm and save/);
   assert.match(data, /subscribeToHandovers/);
   assert.match(route, /membership\.data\(\)\?\.role === "viewer"/);
+  assert.match(route, /GEMINI_API_KEY/);
+  assert.match(route, /extractHandoverWithGemini/);
   assert.match(rules, /function validHandover\(data\)/);
   assert.match(rules, /allow update: if false/);
 });

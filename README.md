@@ -27,7 +27,7 @@ household records. A configured Firebase project is required.
 - Firebase Authentication with Google
 - Cloud Firestore for private realtime family data
 - Supabase Storage free tier for private family files
-- Optional OpenAI Responses API with a zero-spend local extraction fallback
+- OpenAI GPT-5.6 Responses API, Gemini fallback, and local extraction fallback
 - Markdown runtime skill instructions for conservative handover extraction
 
 ## Local development
@@ -59,6 +59,7 @@ the browser bundle. The following values are server-only secrets:
 - `SUPABASE_URL`
 - `SUPABASE_SECRET_KEY`
 - `OPENAI_API_KEY`
+- `GEMINI_API_KEY`
 
 Never commit `.env.local`, service-account JSON, private keys, or API keys.
 
@@ -103,11 +104,12 @@ npm run check:vault
 
 ## Zero-spend handover extraction
 
-Leave `OPENAI_API_KEY` empty to use KinCue's conservative local extraction.
-It recognizes common medication, appointment, task, and item-location details,
-preserves source text, and requires human confirmation. Adding an OpenAI API
-key later enables model-backed structured extraction without changing saved
-handover records.
+KinCue attempts OpenAI GPT-5.6 first, then Gemini when configured, and finally
+its conservative local extractor if neither model is available. Every provider
+uses the same validated handover contract, preserves source evidence, and
+requires human confirmation before saving. Free-tier model services should be
+used only with fictional demo data unless their data handling is appropriate
+for the family's privacy requirements.
 
 Browser notification permission must be enabled separately on every caregiver
 device. The current reminder delivery runs while KinCue is open; a future

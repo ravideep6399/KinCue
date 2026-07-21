@@ -222,13 +222,14 @@ service cloud.firestore {
         ]) &&
         data.keys().hasOnly([
           'id', 'transcript', 'summary', 'items', 'unresolvedQuestions', 'createdByUserId',
-          'createdByDisplayName', 'createdAt', 'updatedAt'
+          'createdByDisplayName', 'provider', 'createdAt', 'updatedAt'
         ]) &&
         data.id is string && data.id.size() > 0 &&
         data.transcript is string && data.transcript.size() >= 12 && data.transcript.size() <= 8000 &&
         data.summary is string && data.summary.size() > 0 && data.summary.size() <= 2000 &&
         data.items is list && data.items.size() <= 20 &&
         data.unresolvedQuestions is list && data.unresolvedQuestions.size() <= 20 &&
+        (!('provider' in data) || data.provider in ['openai', 'gemini', 'local-rules', 'local-fallback']) &&
         data.createdByUserId is string &&
         data.createdByDisplayName is string && data.createdByDisplayName.size() <= 100 &&
         data.createdAt is timestamp && data.updatedAt is timestamp;
