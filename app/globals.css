@@ -370,16 +370,30 @@ button:focus-visible, textarea:focus-visible, input:focus-visible {
 .field-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px 12px; font-size: 12px; }
 .field-grid span { color: var(--muted); }
 .warning-line { margin-top: 9px; color: var(--danger); font-size: 12px; display: flex; align-items: flex-start; gap: 6px; }
+.source-excerpt { margin: 11px 0 0; padding: 9px 11px; border-left: 3px solid var(--line-strong); background: var(--subtle); color: var(--muted); font-size: 12px; line-height: 1.5; }
+.unresolved-list { padding: 14px 18px; border-top: 1px solid var(--line); }
+.unresolved-list > strong { font-size: 12px; }
+.unresolved-list p { margin: 8px 0 0; color: var(--danger); font-size: 12px; display: flex; align-items: flex-start; gap: 6px; }
 .confirm-row { padding: 16px; justify-content: flex-end; }
 .standalone-error { margin: 14px 0 0; padding: 11px 13px; border: 1px solid #e8c7c3; background: var(--danger-soft); color: var(--danger); font-size: 13px; }
 .handover-history { margin-top: 20px; }
 .history-empty { min-height: 110px; display: flex; align-items: center; justify-content: center; gap: 9px; color: var(--muted); }
 .handover-list { margin: 0; padding: 0; list-style: none; }
-.handover-list li { padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.handover-list li { border-bottom: 1px solid var(--line); }
 .handover-list li:last-child { border-bottom: 0; }
-.handover-list strong, .handover-list span { display: block; }
-.handover-list strong { font-size: 13px; line-height: 1.45; }
-.handover-list span { margin-top: 4px; color: var(--muted); font-size: 11px; }
+.saved-handover summary { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; list-style: none; }
+.saved-handover summary::-webkit-details-marker { display: none; }
+.saved-handover summary > span { min-width: 0; }
+.saved-handover summary strong, .saved-handover summary small { display: block; }
+.saved-handover summary strong { font-size: 13px; line-height: 1.45; }
+.saved-handover summary small { margin-top: 4px; color: var(--muted); font-size: 11px; }
+.saved-handover summary svg { flex: 0 0 auto; transition: transform 160ms ease; }
+.saved-handover[open] summary svg { transform: rotate(180deg); }
+.saved-handover-body { border-top: 1px solid var(--line); background: #fff; }
+.saved-transcript { padding: 15px 18px; background: var(--subtle); }
+.saved-transcript strong { font-size: 12px; }
+.saved-transcript p { margin: 7px 0 0; font-size: 13px; line-height: 1.55; white-space: pre-wrap; }
+.saved-handover-item { padding: 15px 18px; border-top: 1px solid var(--line); }
 
 .vault-table { width: 100%; border-collapse: collapse; }
 .vault-table th, .vault-table td { padding: 13px 16px; border-bottom: 1px solid var(--line); text-align: left; font-size: 13px; }

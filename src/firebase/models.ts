@@ -1,3 +1,5 @@
+import type { HandoverExtraction } from "../ai/schemas";
+
 export type FamilyRole = "owner" | "primary_caregiver" | "helper" | "viewer";
 
 export type KinCueUser = {
@@ -156,7 +158,7 @@ export type HandoverRecord = {
   id: string;
   transcript: string;
   summary: string;
-  items: unknown[];
+  items: HandoverExtraction["items"];
   unresolvedQuestions: string[];
   createdByUserId: string;
   createdByDisplayName: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, MessageSquareText, Mic, Save, Sparkles } from "lucide-react";
+import { ChevronDown, CircleAlert, MessageSquareText, Mic, Save, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { HandoverExtraction } from "../src/ai/schemas";
 import { saveHandover, subscribeToHandovers } from "../src/firebase/handovers";
@@ -137,10 +137,14 @@ export function HandoverWorkspace({ notify }: { notify: (message: string) => voi
               {extraction.items.map((item, index) => (
                 <div className="extracted-item" key={`${item.type}-${index}`}>
                   <div className="extracted-top"><strong>{item.title}</strong><span className="source-chip">Source preserved</span></div>
-                  <div className="field-grid"><div><span>Person</span><br />{item.person ?? "Not stated"}</div><div><span>Time</span><br />{item.scheduledTime ?? "Not stated"}</div><div><span>Condition</span><br />{item.condition ?? "Not stated"}</div><div><span>Confidence</span><br />{item.confidence}</div></div>
+                  <div className="field-grid"><div><span>Person</span><br />{item.person ?? "Not stated"}</div><div><span>Time</span><br />{item.scheduledTime ?? "Not stated"}</div><div><span>Condition</span><br />{item.condition ?? "Not stated"}</div><div><span>Location</span><br />{item.location ?? "Not stated"}</div><div><span>Assignee</span><br />{item.assignee ?? "Not stated"}</div><div><span>Confidence</span><br />{item.confidence}</div></div>
+                  <blockquote className="source-excerpt">{item.sourceExcerpt}</blockquote>
                   {item.warnings.map((warning) => <div className="warning-line" key={warning}><CircleAlert size={14} />{warning}</div>)}
                 </div>
               ))}
+              {extraction.unresolvedQuestions.length > 0 && (
+                <div className="unresolved-list"><strong>Needs confirmation</strong>{extraction.unresolvedQuestions.map((question) => <p key={question}><CircleAlert size={14} />{question}</p>)}</div>
+              )}
               <div className="confirm-row"><button className="primary-button" disabled={saving} onClick={() => void confirmHandover()} type="button"><Save size={17} />{saving ? "Saving..." : "Confirm and save"}</button></div>
             </div>
           )}
@@ -152,7 +156,30 @@ export function HandoverWorkspace({ notify }: { notify: (message: string) => voi
         {handovers.length === 0 ? (
           <div className="history-empty"><MessageSquareText size={22} /><span>No saved handovers</span></div>
         ) : (
-          <ul className="handover-list">{handovers.map((handover) => <li key={handover.id}><strong>{handover.summary}</strong><span>{handover.createdByDisplayName} | {formatDate(handover.createdAt)}</span></li>)}</ul>
+          <ul className="handover-list">{handovers.map((handover) => (
+            <li key={handover.id}>
+              <details className="saved-handover">
+                <summary>
+                  <span><strong>{handover.summary}</strong><small>{handover.createdByDisplayName} | {formatDate(handover.createdAt)}</small></span>
+                  <ChevronDown aria-hidden="true" size={18} />
+                </summary>
+                <div className="saved-handover-body">
+                  <div className="saved-transcript"><strong>Original caregiver update</strong><p>{handover.transcript}</p></div>
+                  {handover.items.map((item, index) => (
+                    <div className="saved-handover-item" key={`${handover.id}-${item.type}-${index}`}>
+                      <div className="extracted-top"><strong>{item.title}</strong><span className="source-chip">Confirmed</span></div>
+                      <div className="field-grid"><div><span>Person</span><br />{item.person ?? "Not stated"}</div><div><span>Time</span><br />{item.scheduledTime ?? "Not stated"}</div><div><span>Condition</span><br />{item.condition ?? "Not stated"}</div><div><span>Location</span><br />{item.location ?? "Not stated"}</div><div><span>Assignee</span><br />{item.assignee ?? "Not stated"}</div><div><span>Confidence</span><br />{item.confidence}</div></div>
+                      <blockquote className="source-excerpt">{item.sourceExcerpt}</blockquote>
+                      {item.warnings.map((warning) => <div className="warning-line" key={warning}><CircleAlert size={14} />{warning}</div>)}
+                    </div>
+                  ))}
+                  {handover.unresolvedQuestions.length > 0 && (
+                    <div className="unresolved-list"><strong>Unresolved questions</strong>{handover.unresolvedQuestions.map((question) => <p key={question}><CircleAlert size={14} />{question}</p>)}</div>
+                  )}
+                </div>
+              </details>
+            </li>
+          ))}</ul>
         )}
       </div>
     </section>
