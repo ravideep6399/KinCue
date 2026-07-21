@@ -15,24 +15,111 @@ private files through short-lived signed links. Its AI workflow is conservative:
 it preserves source details, identifies missing information, and requires human
 confirmation before saving; the demo can run in a zero-spend local mode.
 
-## Three-minute demo sequence
+## Three-minute recording script
 
-1. **Problem, 0:00-0:20**
-   Explain that routines, medicine context, household instructions, and files
-   often depend on one busy family member.
-2. **Family Space, 0:20-0:45**
-   Show Google sign-in, members, roles, and a linked care recipient.
-3. **Assignment and alarm, 0:45-1:30**
-   Assign a shift on Account A, accept on Account B, then show the synchronized
-   cue and due alarm on the assigned caregiver's device.
-4. **Continuity tools, 1:30-2:15**
-   Show an exact care routine, a Playbook location/reminder, and a reviewed
-   handover extracted from a short caregiver update.
-5. **Private Vault and trust, 2:15-2:40**
-   Open a fake document through a signed URL and briefly show role restrictions.
-6. **Close, 2:40-3:00**
-   Return to Today and state that KinCue turns scattered family knowledge into
-   an accountable, shared continuity system.
+Use the quoted text as narration and perform the action written above it.
+
+### 0:00-0:18 - The problem
+
+**Screen:** Start on KinCue's Today view with the family name, current member,
+and today's timeline visible.
+
+> In many families, one person remembers every routine, appointment, document,
+> and household detail. When that person becomes busy or unavailable, care does
+> not fail because nobody cares. It fails because context was never shared.
+
+### 0:18-0:38 - One private Family Space
+
+**Screen:** Open Members. Show two fictional members with different roles, then
+open Care and show that a household member can also be a person receiving care.
+
+> KinCue gives the household one private Family Space. Every person signs in
+> with their own Google account, receives a role, and can be connected to the
+> people they help. A family member can also become a care recipient without
+> creating a duplicate identity.
+
+### 0:38-1:08 - Routine, shift, and cross-device response
+
+**Screen:** Open Meera's routines and briefly show the labeled hour, minute, and
+AM/PM controls. On the owner browser, show a shift assigned to a primary and
+backup caregiver. On the second browser, accept it. Return to the owner browser
+and show `Accepted by <name>`.
+
+> Here is Meera's evening routine, including its exact time, importance, source
+> instructions, and location. A parent can assign a care shift from one device.
+> The assigned caregiver responds from their own device, and every family view
+> updates from Firestore in real time. This is one shared shift, so the first
+> acceptance establishes coverage for everyone.
+
+### 1:08-1:30 - Alarm and accountability
+
+**Screen:** Return to Today. Show a due cue or a prepared screenshot/clip of the
+due state and browser notification. Complete the cue and show its state update.
+
+> Scheduled routines become persistent cues, not temporary browser timers.
+> KinCue identifies who is covering the shift, raises an in-app alarm and browser
+> notification while the app is open, and records completion in Family Activity.
+> If nobody accepts coverage, the cue is visibly blocked instead of silently
+> assigning responsibility.
+
+### 1:30-1:52 - Home Playbook
+
+**Screen:** Open Playbook and select `Medicine box location`. Show its location,
+instructions, owner, and reminder fields.
+
+> Care is only part of family continuity. The Home Playbook captures knowledge
+> such as where an item is kept, who handles a bill, or what to do during an
+> outage. Entries are searchable, assignable, and can create scheduled cues.
+
+### 1:52-2:28 - Handover extraction without API credit
+
+**Screen:** Open Handover and enter this fictional transcript:
+
+`Meera took the blue vitamin tablet at 8 PM after dinner. The bottle is in the
+upper kitchen cabinet. Her clinic appointment is tomorrow, but the time was not
+confirmed.`
+
+Click **Structure handover**. Show the proposed items, warning or unresolved
+question, source excerpts, `Local fallback` label, and human confirmation step.
+
+> A caregiver can turn an unstructured update into a reviewable briefing.
+> KinCue's server pipeline is built for the OpenAI Responses API with GPT-5.6, a
+> Markdown extraction skill, and a typed structured-output schema. This demo
+> project currently has no paid API quota, so KinCue says so clearly and uses its
+> conservative local fallback. The contract stays the same: preserve source
+> evidence, flag missing details, and never save anything until a person confirms
+> it.
+
+### 2:28-2:48 - Private Vault
+
+**Screen:** Open Vault and show one fictional non-sensitive document. Open it,
+then return to the document list.
+
+> Important files live in a private Supabase bucket. KinCue verifies Firebase
+> identity and Family Space permissions on the server before issuing a short-lived
+> signed link. Storage credentials never reach the browser.
+
+### 2:48-3:00 - Close
+
+**Screen:** Return to Today with the timeline, coverage, and recent activity in
+one frame.
+
+> KinCue turns scattered family memory into shared, accountable continuity: the
+> right instruction, for the right person, at the right time.
+
+End on the KinCue interface for two seconds. Do not end on source code or a
+terminal.
+
+## Fictional demo data
+
+- Family Space: `Singh Family`
+- Care recipient: `Meera Singh`
+- Primary caregiver: `Asha Singh`
+- Backup caregiver: `Ravi Singh`
+- Routine: `Evening vitamin`, `8:00 PM`, after dinner, high importance
+- Playbook entry: `Medicine box location`, upper kitchen cabinet
+- Vault file: a clearly fictional appointment checklist with no private data
+- Shift: begin it shortly before recording so its cue can become due on camera
 
 ## Recording setup
 
