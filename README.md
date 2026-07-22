@@ -3,6 +3,25 @@
 KinCue is a private family continuity workspace for coordinating care,
 household knowledge, reminders, handovers, and documents across devices.
 
+**Live demo:** [kincue-family.ravideepsingh1000.chatgpt.site](https://kincue-family.ravideepsingh1000.chatgpt.site)
+
+## Built with Codex and GPT-5.6
+
+Codex with GPT-5.6 was used throughout the project to turn the initial family
+continuity problem into a working product: shaping the architecture, building
+the Next.js and Firebase workflows, reviewing Firestore security rules,
+debugging Google authentication, iterating on the responsive interface, and
+creating focused tests for shared caregiver behavior. Key product decisions,
+including first-acceptance shift coverage and mandatory human review of AI
+handovers, were made through iterative discussions with Codex rather than
+delegated blindly.
+
+The runtime handover pipeline supports the OpenAI Responses API with GPT-5.6
+and a typed structured-output contract. Because the demo OpenAI account did not
+have API quota, the recorded live demo transparently uses the Gemini fallback;
+both providers use the same Markdown extraction skill, preserve source
+evidence, flag missing information, and require confirmation before saving.
+
 ## Product scope
 
 - Google sign-in and private Family Spaces
